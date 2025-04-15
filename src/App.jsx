@@ -19,7 +19,7 @@ function App() {
   const [searchError, setSearchError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("Search :", searchTerm);
+  // console.log("Search :", searchTerm);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -38,7 +38,6 @@ function App() {
           setSearchError("No results found");
         }
 
-        setSearchResults(data.results);
         setSearchError(null); // clear error if data is found
 
         setSearchResults(data.results);
@@ -59,7 +58,7 @@ function App() {
         <div className="pattern" />
         <div className="wrapper">
           <header className="Hero_Section">
-            <img src="/public/hero.png" />
+            <img src="/hero.png" />
             <h1>
               Find <span className="text-gradient">Movies</span>, You Will Love
               Without Any Hassle!
@@ -70,7 +69,7 @@ function App() {
           <section>
             <h2 className="mb-5 mt-5 text-center">Popular Movies</h2>
             {isLoading ? (
-              <h1>Loading</h1>
+              <h1>Loading...</h1>
             ) : searchError ? (
               <p className="text-red-500">{searchError}</p>
             ) : (
