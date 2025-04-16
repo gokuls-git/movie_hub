@@ -1,6 +1,8 @@
 import React from "react";
 
-const Card = ({ movie: { title, poster_path } }) => {
+const Card = ({
+  movie: { title, poster_path, vote_average, original_language, release_date },
+}) => {
   return (
     <div className="movie-card">
       <img src={`https://image.tmdb.org/t/p/w500/${poster_path}`} alt={title} />
@@ -11,14 +13,14 @@ const Card = ({ movie: { title, poster_path } }) => {
         <div className="content">
           <div className="rating">
             <img src="star.svg" alt="Star Icon" />
-            <p>{"N/A"}</p>
+            <p>{vote_average ? vote_average.toFixed(1) : "N/A"}</p>
           </div>
 
           <span>•</span>
-          <p className="lang">{"original_language"}</p>
+          <p className="lang">{original_language}</p>
 
           <span>•</span>
-          <p className="year">{"N/A"}</p>
+          <p className="year">{release_date}</p>
         </div>
       </div>
     </div>

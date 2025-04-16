@@ -3,6 +3,7 @@ import "./App.css";
 import Search from "./components/Search/Search";
 import "./index.css";
 import Card from "./components/Card/Card";
+import Spinner from "./components/Spinner/Spinner";
 
 const API_BASE_URL = "https://api.themoviedb.org/3/";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -22,11 +23,13 @@ function App() {
   // console.log("Search :", searchTerm);
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchMovies = async (query = "") => {
       setIsLoading(true);
       setSearchError("Error Occured");
       try {
-        const endPoint = `${API_BASE_URL}discover/movie?sort_by=popularity.desc`;
+        const endPoint = query
+          ? `${API_BASE_URL}search/movie?query=${encodeURIComponent(query)}`
+          : `${API_BASE_URL}discover/movie?sort_by=popularity.desc`;
         const response = await fetch(endPoint, API_OPTIONS);
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -49,8 +52,8 @@ function App() {
         setIsLoading(false);
       }
     };
-    fetchMovies();
-  }, []);
+    fetchMovies(searchTerm);
+  }, [searchTerm]);
 
   return (
     <>
@@ -67,9 +70,11 @@ function App() {
           </header>
 
           <section>
-            <h2 className="mb-5 mt-5 text-center">Popular Movies</h2>
+            <h1 className="mb-7 mt-7 text-center">All Popular Movies</h1>
             {isLoading ? (
-              <h1>Loading...</h1>
+              <div className="flex items-center">
+                <Spinner />
+              </div>
             ) : searchError ? (
               <p className="text-red-500">{searchError}</p>
             ) : (
