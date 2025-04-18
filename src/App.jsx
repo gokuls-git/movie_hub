@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
-import Search from "./components/Search/Search";
 import "./index.css";
+import Search from "./components/Search/Search";
 import Card from "./components/Card/Card";
 import Spinner from "./components/Spinner/Spinner";
 
@@ -14,45 +14,51 @@ const API_OPTIONS = {
     Authorization: `Bearer ${API_KEY}`,
   },
 };
+
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [searchError, setSearchError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // console.log("Search :", searchTerm);
-
   useEffect(() => {
-    const fetchMovies = async (query = "") => {
-      setIsLoading(true);
-      setSearchError("Error Occured");
-      try {
-        const endPoint = query
-          ? `${API_BASE_URL}search/movie?query=${encodeURIComponent(query)}`
-          : `${API_BASE_URL}discover/movie?sort_by=popularity.desc`;
-        const response = await fetch(endPoint, API_OPTIONS);
-        if (!response.ok) {
-          throw new Error(response.statusText);
+    const handler = setTimeout(() => {
+      const fetchMovies = async (query = "") => {
+        setIsLoading(true);
+        try {
+          const endPoint = query
+            ? `${API_BASE_URL}search/movie?query=${encodeURIComponent(query)}`
+            : `${API_BASE_URL}discover/movie?sort_by=popularity.desc`;
+
+          const response = await fetch(endPoint, API_OPTIONS);
+
+          if (!response.ok) {
+            throw new Error(response.statusText);
+          }
+
+          const data = await response.json();
+
+          if (!data.results || data.results.length === 0) {
+            setSearchError("No results found");
+          } else {
+            setSearchError(null); // Clear error if results exist
+          }
+
+          setSearchResults(data.results);
+        } catch (error) {
+          console.error(error);
+          setSearchError("Error fetching movies, Please try again!");
+        } finally {
+          setIsLoading(false);
         }
+      };
 
-        const data = await response.json();
+      fetchMovies(searchTerm);
+    }, 800); // debounce delay
 
-        if (!data.results || data.results.length === 0) {
-          setSearchError("No results found");
-        }
-
-        setSearchError(null); // clear error if data is found
-
-        setSearchResults(data.results);
-        console.log("DATA:", data);
-      } catch (error) {
-        console.log(error);
-        setSearchError("Error fetching movies, Please try again!");
-      } finally {
-        setIsLoading(false);
-      }
+    return () => {
+      clearTimeout(handler);
     };
-    fetchMovies(searchTerm);
   }, [searchTerm]);
 
   return (
@@ -61,7 +67,7 @@ function App() {
         <div className="pattern" />
         <div className="wrapper">
           <header className="Hero_Section">
-            <img src="/hero.png" />
+            <img src="/hero.png" alt="Hero" />
             <h1>
               Find <span className="text-gradient">Movies</span>, You Will Love
               Without Any Hassle!
@@ -79,9 +85,9 @@ function App() {
               <p className="text-red-500">{searchError}</p>
             ) : (
               <div className="grid grid-cols-4 gap-4">
-                {searchResults.map((movie, i) => {
-                  return <Card key={i} movie={movie} />;
-                })}
+                {searchResults.map((movie, i) => (
+                  <Card key={i} movie={movie} />
+                ))}
               </div>
             )}
             <p>{searchError}</p>
