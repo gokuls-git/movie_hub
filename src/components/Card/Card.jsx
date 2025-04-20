@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Card = ({
   movie: { title, poster_path, vote_average, original_language, release_date },
 }) => {
+  // useEffect(() => {
+  //   const doubleNum = (num, callback) => {
+  //     const result = num * 2;
+  //     callback(result);
+  //   };
+
+  //   const displyText = (text) => {
+  //     console.log(`Result is: ${text}`);
+  //   };
+
+  //   doubleNum(5, displyText);
+  // }, []);
+
   return (
     <div className="movie-card">
       <img src={`https://image.tmdb.org/t/p/w500/${poster_path}`} alt={title} />

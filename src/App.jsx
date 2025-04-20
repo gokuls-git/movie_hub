@@ -54,7 +54,7 @@ function App() {
       };
 
       fetchMovies(searchTerm);
-    }, 800); // debounce delay
+    }, 400); // debounce delay
 
     return () => {
       clearTimeout(handler);
